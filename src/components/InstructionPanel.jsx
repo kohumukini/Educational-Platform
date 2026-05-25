@@ -4,6 +4,7 @@ function InstructionPanel({
   step,
   onNext,
   onBack,
+  onRestart,
   isStepCompleted,
   activeHoveredSide,
   shearProgress,
@@ -61,7 +62,7 @@ function InstructionPanel({
                 Let's test our theory. Does the space inside the two smaller squares combine to fit perfectly inside the largest square?
               </p>
               <p>
-                <strong>Your Task:</strong> Drag the four colored shapes on the right and rearrange them so they pack inside the largest dashed square.
+                <strong>Your Task:</strong> Drag the five colored shapes on the right and rearrange them so they pack inside the largest dashed square.
               </p>
               <p>
                 This physical rearrangement shows that no space is lost or gained. The smaller areas sum up exactly to the larger area.
@@ -84,13 +85,13 @@ function InstructionPanel({
                   fontFamily: 'var(--font-heading)', 
                   fontWeight: 'bold', 
                   fontSize: '18px',
-                  color: snappedCount === 4 ? 'var(--color-success)' : 'var(--color-amber)'
+                  color: snappedCount === 5 ? 'var(--color-success)' : 'var(--color-amber)'
                 }}>
-                  {snappedCount} / 4
+                  {snappedCount} / 5
                 </span>
               </div>
               
-              {snappedCount === 4 && (
+              {snappedCount === 5 && (
                 <p style={{ marginTop: '16px', color: 'var(--color-success)', fontWeight: '500', fontSize: '14px', animation: 'fadeIn 0.3s ease' }}>
                   ✓ Perfect fit! The pieces occupy the exact same space.
                 </p>
@@ -163,7 +164,30 @@ function InstructionPanel({
               </div>
               
               <p>
-                You have just constructed the Pythagorean Theorem! You can now use this shorthand rule to find any missing side of a right-angled triangle.
+                You have just constructed the Pythagorean Theorem! Click the button below to complete the module.
+              </p>
+            </div>
+          </>
+        );
+
+      case 5:
+        return (
+          <>
+            <h2 className="instruction-title">Intuition Unlocked</h2>
+            <div className="instruction-body">
+              <p>
+                Congratulations! You have completed the Pythagorean's Theorem module.
+              </p>
+              <p>
+                Instead of just memorizing the formula, you have explored and built the underlying logic yourself:
+              </p>
+              <ul style={{ paddingLeft: '20px', marginBottom: '24px', color: 'var(--text-muted)' }}>
+                <li style={{ marginBottom: '8px' }}>You compared the areas of the squares on each side.</li>
+                <li style={{ marginBottom: '8px' }}>You physically packed the space of both small squares inside the large one.</li>
+                <li style={{ marginBottom: '8px' }}>You sheared and slid the shapes, showing that leaning them does not change their area.</li>
+              </ul>
+              <p>
+                Feel free to click on any step on the right to review its interactive sandbox, or click "Restart Module" to start over.
               </p>
             </div>
           </>
@@ -198,23 +222,35 @@ function InstructionPanel({
       {/* Button Controls & Action Navigation */}
       <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
         <div className="instruction-footer">
-          <button 
-            className="btn btn-secondary" 
-            style={{ flex: 1 }}
-            onClick={onBack}
-            disabled={step === 1}
-          >
-            Back
-          </button>
-          
-          <button 
-            className="btn btn-primary" 
-            style={{ flex: 1.5 }}
-            onClick={onNext}
-            disabled={!isStepCompleted && step < 4}
-          >
-            {step === 4 ? 'Finished' : 'Continue'}
-          </button>
+          {step === 5 ? (
+            <button 
+              className="btn btn-primary" 
+              style={{ flex: 1 }}
+              onClick={onRestart}
+            >
+              Restart Module
+            </button>
+          ) : (
+            <>
+              <button 
+                className="btn btn-secondary" 
+                style={{ flex: 1 }}
+                onClick={onBack}
+                disabled={step === 1}
+              >
+                Back
+              </button>
+              
+              <button 
+                className="btn btn-primary" 
+                style={{ flex: 1.5 }}
+                onClick={onNext}
+                disabled={!isStepCompleted && step < 4}
+              >
+                {step === 4 ? 'Finish' : 'Continue'}
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>

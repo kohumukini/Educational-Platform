@@ -18,15 +18,28 @@ function App() {
 
   // Handle progression
   const handleNext = () => {
-    if (step < 4) {
+    if (step < 5) {
       setStep(prev => prev + 1);
     }
   };
 
   const handleBack = () => {
     if (step > 1) {
+      // Clear the completion of both the step we are leaving AND the one we return to
+      setStepCompletion(step, false);
+      setStepCompletion(step - 1, false);
       setStep(prev => prev - 1);
     }
+  };
+
+  const handleRestart = () => {
+    setStep1Completed(false);
+    setStep2Completed(false);
+    setStep3Completed(false);
+    setStep4Completed(false);
+    setShearProgress(0);
+    setSnappedCount(0);
+    setStep(1);
   };
 
   const getStepCompletion = (s) => {
@@ -65,17 +78,17 @@ function App() {
                 key={s} 
                 className={`step-dot ${s === step ? 'active' : ''} ${getStepCompletion(s) ? 'completed' : ''}`}
                 onClick={() => {
-                  // Only allow jumping back, or jumping forward if the current step is completed
-                  if (s < step || getStepCompletion(s - 1) || s === 1) {
+                  // Allow jumping to any step that has been unlocked
+                  if (s < step || getStepCompletion(s - 1) || s === 1 || step === 5) {
                     setStep(s);
                   }
                 }}
-                style={{ cursor: (s < step || getStepCompletion(s - 1) || s === 1) ? 'pointer' : 'not-allowed' }}
+                style={{ cursor: (s < step || getStepCompletion(s - 1) || s === 1 || step === 5) ? 'pointer' : 'not-allowed' }}
               />
             ))}
           </div>
-          <span style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)', width: '70px', textAlign: 'right' }}>
-            Step {step} of 4
+          <span style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)', width: '100px', textAlign: 'right' }}>
+            {step === 5 ? "Review Stage" : `Step ${step} of 4`}
           </span>
         </div>
       </header>
@@ -86,6 +99,7 @@ function App() {
           step={step}
           onNext={handleNext}
           onBack={handleBack}
+          onRestart={handleRestart}
           isStepCompleted={getStepCompletion(step)}
           activeHoveredSide={activeHoveredSide}
           shearProgress={shearProgress}
@@ -101,6 +115,7 @@ function App() {
           setShearProgress={setShearProgress}
           snappedCount={snappedCount}
           setSnappedCount={setSnappedCount}
+          setStep={setStep}
         />
       </main>
     </div>

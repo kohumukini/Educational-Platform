@@ -12,7 +12,8 @@ function PuzzleStage({
     1: false,
     2: false,
     3: false,
-    4: false
+    4: false,
+    5: false
   });
 
   const handleDragStart = (id) => {
@@ -34,7 +35,7 @@ function PuzzleStage({
   const isAnyPieceNear = Object.values(piecesNearTarget).some(Boolean);
 
   // Sorting order: make sure the active dragged piece is rendered last (on top)
-  const pieceIds = [1, 2, 3, 4];
+  const pieceIds = [1, 2, 3, 4, 5];
   const sortedPieceIds = [...pieceIds].sort((a, b) => {
     if (a === activeDraggedPieceId) return 1;
     if (b === activeDraggedPieceId) return -1;
@@ -46,31 +47,29 @@ function PuzzleStage({
       {/* Dashed Target Outline for Hypotenuse Square */}
       <polygon
         points="250,180 410,300 530,140 370,20"
-        className={`target-outline ${snappedCount === 4 ? 'active' : (isAnyPieceNear ? 'active' : '')}`}
+        className={`target-outline ${snappedCount === 5 ? 'active' : (isAnyPieceNear ? 'active' : '')}`}
         style={{
-          stroke: snappedCount === 4 
+          stroke: snappedCount === 5 
             ? 'var(--color-success)' 
             : (isAnyPieceNear ? 'var(--color-success)' : 'rgba(255, 255, 255, 0.25)'),
-          strokeWidth: isAnyPieceNear || snappedCount === 4 ? 2.5 : 1.5,
-          filter: isAnyPieceNear || snappedCount === 4 
+          strokeWidth: isAnyPieceNear || snappedCount === 5 ? 2.5 : 1.5,
+          filter: isAnyPieceNear || snappedCount === 5 
             ? 'drop-shadow(0 0 8px rgba(16, 185, 129, 0.4))' 
             : 'none',
           transition: 'stroke 0.2s, stroke-width 0.2s, filter 0.2s'
         }}
       />
       
-      {/* Visual guide lines inside target (split indicators) */}
-      {snappedCount < 4 && (
+      {/* Visual guide lines inside target (pinwheel boundaries) */}
+      {snappedCount < 5 && (
         <>
-          <line 
-            x1={250} y1={180} x2={346} y2={252} 
-            stroke={isAnyPieceNear ? 'rgba(16, 185, 129, 0.1)' : 'rgba(255,255,255,0.04)'} 
-            strokeWidth={1} 
-          />
-          <line 
-            x1={322} y1={84} x2={418} y2={156} 
-            stroke={isAnyPieceNear ? 'rgba(16, 185, 129, 0.1)' : 'rgba(255,255,255,0.04)'} 
-            strokeWidth={1} 
+          {/* Inner 120x120 square outline */}
+          <polygon 
+            points="306,172 402,244 474,148 378,76" 
+            stroke={isAnyPieceNear ? 'rgba(16, 185, 129, 0.08)' : 'rgba(255,255,255,0.03)'} 
+            fill="none" 
+            strokeWidth={1}
+            strokeDasharray="2,2"
           />
         </>
       )}
@@ -92,6 +91,8 @@ function PuzzleStage({
             initialY={config.initial.y}
             targetX={config.target.x}
             targetY={config.target.y}
+            initialRotation={config.initialRotation}
+            targetRotation={config.targetRotation}
             onSnap={handlePieceSnap}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}

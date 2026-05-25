@@ -8,6 +8,8 @@ function DraggablePiece({
   initialY,
   targetX,
   targetY,
+  initialRotation = 0,
+  targetRotation = 0,
   onSnap,
   onDragStart,
   onDragEnd,
@@ -49,7 +51,6 @@ function DraggablePiece({
     if (isSnapped || isDragging) return;
     
     e.preventDefault();
-    // Use pointer capture to bind events
     e.target.setPointerCapture(e.pointerId);
     
     const coords = getSVGCoords(e.clientX, e.clientY);
@@ -115,7 +116,6 @@ function DraggablePiece({
       }
     };
 
-    // Bind event listeners to window for 1:1 lag-free dragging
     window.addEventListener('pointermove', handlePointerMove);
     window.addEventListener('pointerup', handlePointerUp);
     
@@ -125,9 +125,8 @@ function DraggablePiece({
     };
   }, [isDragging, position.x, position.y, targetX, targetY, initialX, initialY, id]);
 
-  // Determine styling based on drag state
   const getStrokeColor = () => {
-    if (isSnapped) return 'var(--color-success)';
+    if (isSnapped) return 'rgba(255, 255, 255, 0.08)'; // Snapped pieces merge together
     if (isNearTarget) return 'var(--color-success)';
     if (isDragging) return 'var(--color-amber-hover)';
     return 'rgba(255,255,255,0.15)';
@@ -139,21 +138,24 @@ function DraggablePiece({
     return 1;
   };
 
+  // Determine active rotation based on dragging and snapped states
+  const rotation = isSnapped ? targetRotation : (isDragging ? targetRotation : initialRotation);
+
   return (
     <polygon
       points={points}
       fill={fill}
-      transform={`translate(${position.x}, ${position.y})`}
+      transform={`translate(${position.x}, ${position.y}) rotate(${rotation})`}
       onPointerDown={handlePointerDown}
       className={`draggable-piece ${isSnapped ? 'snapped' : ''} ${isNearTarget ? 'near-target' : ''}`}
       style={{
         stroke: getStrokeColor(),
         strokeWidth: getStrokeWidth(),
-        fillOpacity: isSnapped ? 0.85 : (isNearTarget ? 0.8 : (isDragging ? 0.7 : 0.55)),
+        fillOpacity: isSnapped ? 0.9 : (isNearTarget ? 0.8 : (isDragging ? 0.7 : 0.55)),
         cursor: isSnapped ? 'default' : (isDragging ? 'grabbing' : 'grab'),
         filter: isNearTarget ? 'drop-shadow(0 0 8px var(--color-success))' : (isDragging ? 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))' : 'none'),
-        /* When dragging, disable transitions for 1:1 mouse matching. Enable for smooth slide-backs. */
-        transition: isDragging ? 'none' : 'transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1), stroke 0.2s, fill-opacity 0.2s, filter 0.2s'
+        /* Smooth transform translations and rotations when not actively dragging */
+        transition: isDragging ? 'none' : 'transform 0.45s cubic-bezier(0.25, 0.8, 0.25, 1), stroke 0.2s, fill-opacity 0.2s, filter 0.2s'
       }}
     />
   );

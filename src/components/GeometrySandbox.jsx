@@ -12,7 +12,8 @@ function GeometrySandbox({
   shearProgress,
   setShearProgress,
   snappedCount,
-  setSnappedCount
+  setSnappedCount,
+  setStep
 }) {
   const svgRef = useRef(null);
 
@@ -54,7 +55,7 @@ function GeometrySandbox({
     const nextSnappedCount = snappedCount + 1;
     setSnappedCount(nextSnappedCount);
     
-    if (nextSnappedCount === 4) {
+    if (nextSnappedCount === 5) {
       setStepCompleted(true);
     }
   };
@@ -73,38 +74,111 @@ function GeometrySandbox({
   // Geometry coordinates of the central triangle
   const trianglePoints = "250,180 250,300 410,300";
 
-  // Piece Definitions (for Step 2 and Step 3)
-  // Upright shapes:
-  // Piece 1: Square 120x120
-  // Piece 2: Rect 120x80
-  // Piece 3: Rect 80x120
-  // Piece 4: Square 80x80
+  // central 5-piece pinwheel config
   const piecesConfig = {
     1: {
       points: "0,0 120,0 120,120 0,120",
       fill: "#D97706", // Burnt Amber
       initial: { x: 130, y: 180 },
-      target: { x: 250, y: 180 }
+      target: { x: 306, y: 172 },
+      targetRotation: -53.13,
+      initialRotation: 0
     },
     2: {
-      points: "0,0 120,0 120,80 0,80",
+      points: "0,0 160,0 160,40 0,40",
       fill: "#B45309", // Medium Amber
       initial: { x: 250, y: 300 },
-      target: { x: 346, y: 252 }
+      target: { x: 274, y: 148 },
+      targetRotation: -53.13,
+      initialRotation: 0
     },
     3: {
-      points: "0,0 80,0 80,120 0,120",
+      points: "0,0 160,0 160,40 0,40",
       fill: "#E29B52", // Light Gold-Amber
-      initial: { x: 330, y: 300 },
-      target: { x: 322, y: 84 }
+      initial: { x: 250, y: 340 },
+      target: { x: 402, y: 44 },
+      targetRotation: 36.87,
+      initialRotation: 0
     },
     4: {
-      points: "0,0 80,0 80,80 0,80",
+      points: "0,0 160,0 160,40 0,40",
       fill: "#F59E0B", // Bright Amber
       initial: { x: 250, y: 380 },
-      target: { x: 418, y: 156 }
+      target: { x: 506, y: 172 },
+      targetRotation: 126.87,
+      initialRotation: 0
+    },
+    5: {
+      points: "0,0 160,0 160,40 0,40",
+      fill: "#D97706", // Burnt Amber
+      initial: { x: 250, y: 420 },
+      target: { x: 378, y: 276 },
+      targetRotation: -143.13,
+      initialRotation: 0
     }
   };
+
+  // Render review dashboard cards when on step 5
+  if (step === 5) {
+    const reviewCards = [
+      { id: 1, name: "Step 1: Comparing Areas", desc: "Hover over the squares constructed on each side to analyze their sizes." },
+      { id: 2, name: "Step 2: Dissection Puzzle", desc: "Rearrange the 5 pieces and fit them inside the hypotenuse square." },
+      { id: 3, name: "Step 3: Sliding Shapes", desc: "Shear and slide the areas to show how sliding preserves space." },
+      { id: 4, name: "Step 4: Algebraic Shorthand", desc: "Connect the geometry logic back to the simple formula a² + b² = c²." }
+    ];
+
+    return (
+      <div className="panel sandbox-pane" style={{ padding: '32px', overflowY: 'auto', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'stretch' }}>
+        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', color: 'var(--text-light)', marginBottom: '24px', letterSpacing: '-0.01em' }}>
+          Interactive Review Board
+        </h3>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px', width: '100%' }}>
+          {reviewCards.map(card => (
+            <div 
+              key={card.id}
+              onClick={() => setStep(card.id)}
+              style={{
+                background: 'var(--bg-surface-elevated)',
+                border: '1px solid var(--border-color)',
+                borderRadius: 'var(--inner-radius)',
+                padding: '24px',
+                cursor: 'pointer',
+                transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                gap: '12px'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = 'var(--color-amber)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(0, 0, 0, 0.3)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'var(--border-color)';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              <div>
+                <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', color: 'var(--color-amber)', marginBottom: '8px' }}>
+                  {card.name}
+                </h4>
+                <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.5' }}>
+                  {card.desc}
+                </p>
+              </div>
+              
+              <span style={{ fontSize: '12px', color: 'var(--text-light)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                Open Sandbox →
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="panel sandbox-pane">

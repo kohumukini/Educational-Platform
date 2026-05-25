@@ -8,7 +8,7 @@ function ShearStage({
   const getInterpolatedTransform = (config, t) => {
     const x = config.initial.x + (config.target.x - config.initial.x) * t;
     const y = config.initial.y + (config.target.y - config.initial.y) * t;
-    const angle = 0 + (-53.13 - 0) * t;
+    const angle = 0 + (config.targetRotation - 0) * t;
     return `translate(${x}, ${y}) rotate(${angle})`;
   };
 
@@ -22,7 +22,7 @@ function ShearStage({
       />
 
       {/* Render morphing pieces using slider linear interpolation */}
-      {[1, 2, 3, 4].map((id) => {
+      {[1, 2, 3, 4, 5].map((id) => {
         const config = piecesConfig[id];
         const t = shearProgress / 100;
         const transform = getInterpolatedTransform(config, t);
@@ -33,7 +33,7 @@ function ShearStage({
             fill={config.fill}
             transform={transform}
             style={{
-              stroke: 'rgba(255, 255, 255, 0.1)',
+              stroke: 'rgba(255, 255, 255, 0.08)',
               strokeWidth: 1,
               fillOpacity: 0.65,
               transition: 'none'
