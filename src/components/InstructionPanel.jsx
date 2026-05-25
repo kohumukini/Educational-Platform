@@ -188,7 +188,7 @@ function InstructionPanel({
             display: 'block',
             marginBottom: '4px'
           }}>
-            Pedagogical Step {step}
+            Step {step}
           </span>
         </div>
         
